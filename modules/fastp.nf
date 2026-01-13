@@ -30,6 +30,7 @@ process fastp_trim {
     fastp -i \$R1_FILES -I \$R2_FILES \
           -o trimmed/${sample}_trimmed_R1.fq.gz \
           -O trimmed/${sample}_trimmed_R2.fq.gz \
+          -y \
           --detect_adapter_for_pe \
           --thread 4
     """
