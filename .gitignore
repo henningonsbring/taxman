@@ -1,0 +1,7 @@
+# Nextflow logs
+.nextflow.log*
+.nextflow/history*
+
+# Nextflow working directories
+.nextflow/
+work/
