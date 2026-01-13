@@ -70,19 +70,18 @@ workflow {
         println ""
     }
 
-// STEP 4: SPAdes assembly
-println ""
-println "STEP 4: Running SPAdes assembly"
-println "-" * 40
+    // STEP 4: SPAdes assembly
+    assembly_results = spades_assemble(final_fastqs)
 
-assembly_results = spades_assemble(final_fastqs)
-
-assembly_results.subscribe { sample, assembly_dir, transcripts_file ->
-    println "Sample: $sample"
-    println "  Assembly directory: $assembly_dir"
-    println "  Transcripts: ${transcripts_file.getFileName()}"
-    println ""
-}
+    assembly_results.subscribe { sample, assembly_dir, transcripts_file ->
+        println ""
+        println "STEP 4: SPAdes assembly complete"
+        println "-" * 40
+        println "Sample: $sample"
+        println "  Assembly directory: $assembly_dir"
+        println "  Transcripts: ${transcripts_file.getFileName()}"
+        println ""
+    }
 
     println ""
     println "=" * 80
