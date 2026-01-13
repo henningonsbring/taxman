@@ -2,8 +2,7 @@ process fastp_trim {
 
     tag "$sample"
 
-    // Use a default value if params.outdir is not set
-    publishDir "${params.outdir ?: 'results'}/trimmed", mode: 'copy'
+    publishDir "${params.outdir}/[trimmed|subsampled]", mode: 'copy'
 
     input:
     tuple val(sample), path(fqs)
