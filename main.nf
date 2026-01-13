@@ -1,10 +1,12 @@
 nextflow.enable.dsl=2
 
-include { fastp_trim } from './modules/fastp.nf'
+params.prefix         = ""
+params.directory      = ""
+params.outdir         = "results"
+params.subsample_reads = null  // Optional parameter
 
-params.prefix    = ""
-params.directory = ""
-params.outdir    = "results"
+include { fastp_trim } from './modules/fastp.nf'
+include { subsample_fastq } from './modules/subsample.nf'
 
 workflow {
 
@@ -13,6 +15,9 @@ workflow {
     println "=" * 80
     println "Prefix: ${params.prefix}"
     println "Input directory: ${params.directory}"
+    if (params.subsample_reads) {
+        println "Subsample reads: ${params.subsample_reads}"
+    }
     println ""
 
     // ------------------------------------------------------------
@@ -76,13 +81,50 @@ workflow {
 
     trimmed_fastqs = fastp_trim(fastq_files)
 
-    // Subscribe to trimmed output
-    trimmed_fastqs.subscribe { sample, r1_file, r2_file ->
-        println "Sample: $sample"
-        println "  Output trimmed files:"
-        println "    Trimmed R1: ${r1_file.getFileName()}"
-        println "    Trimmed R2: ${r2_file.getFileName()}"
-        println ""  // Add blank line
+    // ------------------------------------------------------------
+    // STEP 3: Optional subsampling
+    // ------------------------------------------------------------
+    Channel
+        .from(params.subsample_reads)
+        .set { subsample_param }
+
+    // Check if subsampling is requested
+    if (params.subsample_reads) {
+        println ""
+        println "STEP 3: Subsampling trimmed reads to ${params.subsample_reads} reads per file"
+        println "-" * 40
+
+        // Create a channel with the subsample parameter for each sample
+        trimmed_fastqs
+            .combine(subsample_param)
+            .set { subsample_input }
+
+        final_fastqs = subsample_fastq(subsample_input)
+
+        // Subscribe to subsampled output
+        final_fastqs.subscribe { sample, r1_file, r2_file ->
+            println "Sample: $sample"
+            println "  Output subsampled files:"
+            println "    Subsample R1: ${r1_file.getFileName()}"
+            println "    Subsample R2: ${r2_file.getFileName()}"
+            println ""  // Add blank line
+        }
+    } else {
+        println ""
+        println "STEP 3: Skipping subsampling (--subsample-reads not specified)"
+        println "-" * 40
+
+        // If no subsampling, just pass through the trimmed files
+        final_fastqs = trimmed_fastqs
+
+        // Subscribe to trimmed output
+        final_fastqs.subscribe { sample, r1_file, r2_file ->
+            println "Sample: $sample"
+            println "  Output trimmed files (no subsampling):"
+            println "    Trimmed R1: ${r1_file.getFileName()}"
+            println "    Trimmed R2: ${r2_file.getFileName()}"
+            println ""  // Add blank line
+        }
     }
 
     // ------------------------------------------------------------
@@ -92,4 +134,8 @@ workflow {
     println "=" * 80
     println "WORKFLOW COMPLETE"
     println "=" * 80
+
+    // Final output channel (for downstream processes if needed)
+    emit:
+    final_fastqs
 }
