@@ -44,9 +44,9 @@ workflow {
     // Step 1: print FASTQs
     print_fastqs(fastq_files)
 
-    // Step 2: run fastp trimming
+    // Step 2: run fastp trimming (will handle all R1/R2 files)
     trimmed_fastqs = fastp_trim(fastq_files)
 
-    // Optional: view trimmed files
+    // View trimmed files
     trimmed_fastqs.view()
 }
