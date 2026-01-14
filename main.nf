@@ -4,6 +4,7 @@ include { fastp_trim } from './modules/fastp.nf'
 include { subsample_fastq } from './modules/subsample.nf'
 include { spades_assemble } from './modules/spades.nf'
 include { diamond_blastx } from './modules/diamond.nf'
+include { taxa_quantify } from './modules/taxa_quantify.nf'  // ADD THIS
 
 workflow {
     println "=" * 80
@@ -90,7 +91,6 @@ workflow {
     println "STEP 5: Running diamond blastx"
     println "-" * 40
 
-    // Extract just the transcripts file from assembly results
     diamond_input = assembly_results.map { sample, assembly_dir, transcripts_file ->
         tuple(sample, transcripts_file)
     }
@@ -100,6 +100,29 @@ workflow {
     diamond_results.subscribe { sample, diamond_output ->
         println "Sample: $sample"
         println "  Diamond output: ${diamond_output.getFileName()}"
+        println ""
+    }
+
+    // STEP 6: Taxa quantification
+    println ""
+    println "STEP 6: Quantifying taxa"
+    println "-" * 40
+
+    taxa_results = taxa_quantify(diamond_results)
+
+    taxa_results.subscribe { sample, summary_file, top_taxa_file ->
+        println "Sample: $sample"
+        println "  Taxa summary: ${summary_file.getFileName()}"
+        println "  Top taxa list: ${top_taxa_file.getFileName()}"
+        println ""
+
+        // Optional: Print a preview of top taxa
+        println "  Top 5 taxa preview:"
+        def top_file = top_taxa_file.toString()
+        def lines = new File(top_file).readLines().take(5)
+        lines.each { line ->
+            println "    $line"
+        }
         println ""
     }
 
