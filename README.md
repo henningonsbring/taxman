@@ -66,7 +66,7 @@ diamond makedb \
   --taxonnames taxdump/names.dmp
 ```
 
-5. Configure database path
+### 5. Configure database path
 
 Add the path to the generated DIAMOND database in `nextflow.config`.
 
