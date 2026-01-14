@@ -16,7 +16,7 @@ process taxa_quantify {
     echo "Input diamond file: \$(basename ${diamond_tsv})"
     echo ""
 
-    # Run the taxa quantification script
+    # Run the taxa quantification script - FIXED VERSION
     awk -F'\\t' '{
         # Extract the scientific name field
         split(\$4, entries, ";");
@@ -30,26 +30,34 @@ process taxa_quantify {
     }' ${diamond_tsv} \
     | sort \
     | uniq -c \
-    | awk '{
-        species = \$2 " " \$3;
-        count[species] = \$1;
-        total += \$1;
-    }
-    END {
-        # Print detailed summary
+    | sort -k1,1nr \
+    | awk 'BEGIN {
+        total = 0;
         print "=" * 60;
         print "TAXA QUANTIFICATION SUMMARY";
         print "=" * 60;
         printf "%-40s %10s %10s\\n", "Species", "Count", "Percent";
         print "-" * 60;
-        for (s in count) {
-            printf "%-40s %10d %9.2f%%\\n", s, count[s], (count[s]/total)*100;
+    }
+    {
+        species = \$2 " " \$3;
+        count = \$1;
+        total += count;
+        counts[species] = count;
+        species_list[NR] = species;
+    }
+    END {
+        # Print sorted by count (already sorted from pipe)
+        for (i = 1; i <= NR; i++) {
+            species = species_list[i];
+            count = counts[species];
+            printf "%-40s %10d %9.2f%%\\n", species, count, (count/total)*100;
         }
         print "=" * 60;
         printf "%-40s %10d %9.2f%%\\n", "TOTAL", total, 100.00;
     }' > ${sample}_taxa_summary.txt
 
-    # Create sorted top taxa list
+    # Create sorted top taxa list (clean version)
     awk -F'\\t' '{
         split(\$4, entries, ";");
         first_entry = entries[1];
