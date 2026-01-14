@@ -3,6 +3,7 @@ nextflow.enable.dsl=2
 include { fastp_trim } from './modules/fastp.nf'
 include { subsample_fastq } from './modules/subsample.nf'
 include { spades_assemble } from './modules/spades.nf'
+include { diamond_blastx } from './modules/diamond.nf'
 
 workflow {
     println "=" * 80
@@ -71,15 +72,34 @@ workflow {
     }
 
     // STEP 4: SPAdes assembly
+    println ""
+    println "STEP 4: Running SPAdes assembly"
+    println "-" * 40
+
     assembly_results = spades_assemble(final_fastqs)
 
     assembly_results.subscribe { sample, assembly_dir, transcripts_file ->
-        println ""
-        println "STEP 4: SPAdes assembly complete"
-        println "-" * 40
         println "Sample: $sample"
         println "  Assembly directory: $assembly_dir"
         println "  Transcripts: ${transcripts_file.getFileName()}"
+        println ""
+    }
+
+    // STEP 5: Diamond blastx
+    println ""
+    println "STEP 5: Running diamond blastx"
+    println "-" * 40
+
+    // Extract just the transcripts file from assembly results
+    diamond_input = assembly_results.map { sample, assembly_dir, transcripts_file ->
+        tuple(sample, transcripts_file)
+    }
+
+    diamond_results = diamond_blastx(diamond_input)
+
+    diamond_results.subscribe { sample, diamond_output ->
+        println "Sample: $sample"
+        println "  Diamond output: ${diamond_output.getFileName()}"
         println ""
     }
 
