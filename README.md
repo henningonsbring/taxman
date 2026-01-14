@@ -15,7 +15,7 @@ An optional read downsampling step is included to enable fair cross-library comp
 
 The following tools must be installed and available on your system:
 
-- **Nextflow** (DSL2)
+- **Nextflow** (DSL2) https://www.nextflow.io/docs/latest/install.html
 - **fastp** https://github.com/OpenGene/fastp
 - **seqtk** https://github.com/lh3/seqtk
 - **SPAdes** https://github.com/ablab/spades/releases/tag/v4.2.0
