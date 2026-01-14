@@ -8,8 +8,7 @@ process taxa_quantify {
     tuple val(sample), path(diamond_tsv)
 
     output:
-    tuple val(sample), path("${sample}_taxa_summary.txt")
-    path("${sample}_top_taxa.txt")
+    tuple val(sample), path("${sample}_taxa_summary.txt"), path("${sample}_top_taxa.txt")
 
     script:
     """
@@ -48,17 +47,21 @@ process taxa_quantify {
         }
         print "=" * 60;
         printf "%-40s %10d %9.2f%%\\n", "TOTAL", total, 100.00;
-
-        # Also save for sorting
-        for (s in count) {
-            print count[s] "|" s;
-        }
     }' > ${sample}_taxa_summary.txt
 
     # Create sorted top taxa list
-    grep '|' ${sample}_taxa_summary.txt | \
-    awk -F'|' '{printf "%-40s %6d\\n", \$2, \$1}' | \
-    sort -k2,2nr > ${sample}_top_taxa.txt
+    awk -F'\\t' '{
+        split(\$4, entries, ";");
+        first_entry = entries[1];
+        split(first_entry, words, " ");
+        if (length(words) >= 2) {
+            print words[1] " " words[2];
+        }
+    }' ${diamond_tsv} \
+    | sort \
+    | uniq -c \
+    | sort -k1,1nr \
+    | awk '{printf "%-40s %6d\\n", \$2 " " \$3, \$1}' > ${sample}_top_taxa.txt
 
     echo ""
     echo "Taxa quantification complete for sample: $sample"
