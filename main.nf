@@ -4,7 +4,7 @@ include { fastp_trim } from './modules/fastp.nf'
 include { subsample_fastq } from './modules/subsample.nf'
 include { spades_assemble } from './modules/spades.nf'
 include { diamond_blastx } from './modules/diamond.nf'
-include { taxa_quantify } from './modules/taxa_quantify.nf'  // ADD THIS
+include { taxa_quantify } from './modules/taxa_quantify.nf'
 
 workflow {
     println "=" * 80
@@ -125,4 +125,10 @@ workflow {
             println "    $line"
         }
         println ""
+    }
+
+    println ""
+    println "=" * 80
+    println "WORKFLOW COMPLETE"
+    println "=" * 80
 }
