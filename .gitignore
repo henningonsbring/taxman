@@ -5,3 +5,6 @@
 # Nextflow working directories
 .nextflow/
 work/
+
+# Common output
+results/
