@@ -110,21 +110,27 @@ workflow {
 
     taxa_results = taxa_quantify(diamond_results)
 
-    taxa_results.subscribe { sample, summary_file, top_taxa_file ->
-        println "Sample: $sample"
-        println "  Taxa summary: ${summary_file.getFileName()}"
-        println "  Top taxa list: ${top_taxa_file.getFileName()}"
-        println ""
-
-        // Optional: Print a preview of top taxa
-        println "  Top 5 taxa preview:"
-        def top_file = top_taxa_file.toString()
-        def lines = new File(top_file).readLines().take(5)
-        lines.each { line ->
-            println "    $line"
+    // Handle the 3-output channel correctly
+    taxa_results
+        .map { sample, summary_file, top_taxa_file ->
+            // Just pass the first two for display, or all three if needed
+            [sample, summary_file, top_taxa_file]
         }
-        println ""
-    }
+        .subscribe { sample, summary_file, top_taxa_file ->
+            println "Sample: $sample"
+            println "  Taxa summary: ${summary_file.getFileName()}"
+            println "  Top taxa list: ${top_taxa_file.getFileName()}"
+            println ""
+
+            // Optional: Print a preview of top taxa
+            println "  Top 5 taxa preview:"
+            def top_file = top_taxa_file.toString()
+            def lines = new File(top_file).readLines().take(5)
+            lines.each { line ->
+                println "    $line"
+            }
+            println ""
+        }
 
     println ""
     println "=" * 80
