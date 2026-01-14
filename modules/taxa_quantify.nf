@@ -16,7 +16,7 @@ process taxa_quantify {
     echo "Input diamond file: \$(basename ${diamond_tsv})"
     echo ""
 
-    # Run the taxa quantification script - FIXED VERSION
+    # Run the taxa quantification script
     awk -F'\\t' '{
         # Extract the scientific name field
         split(\$4, entries, ";");
@@ -33,11 +33,11 @@ process taxa_quantify {
     | sort -k1,1nr \
     | awk 'BEGIN {
         total = 0;
-        print "=" * 60;
+        print " ";
         print "TAXA QUANTIFICATION SUMMARY";
-        print "=" * 60;
+        print " ";
         printf "%-40s %10s %10s\\n", "Species", "Count", "Percent";
-        print "-" * 60;
+        print " ";
     }
     {
         species = \$2 " " \$3;
@@ -53,7 +53,7 @@ process taxa_quantify {
             count = counts[species];
             printf "%-40s %10d %9.2f%%\\n", species, count, (count/total)*100;
         }
-        print "=" * 60;
+        print " ";
         printf "%-40s %10d %9.2f%%\\n", "TOTAL", total, 100.00;
     }' > ${sample}_taxa_summary.txt
 
