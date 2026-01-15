@@ -72,7 +72,7 @@ Add the path to the generated DIAMOND database in `nextflow.config`.
 
 #### Input requirements
 
-- Paired-end FASTQ files following this naming pattern: *_R[12]_*.fastq.gz
+- Paired-end FASTQ files following this naming pattern: `*_R[12]_*.fastq.gz`
 
 - A DIAMOND NR database built with taxonomy support
 

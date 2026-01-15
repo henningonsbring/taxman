@@ -8,3 +8,6 @@ work/
 
 # Common output
 results/
+
+# Development environment files
+.idea/
