@@ -29,6 +29,7 @@ Pasteurella multocida                            57      3.94%
 nextflow run main.nf \
   --prefix SAMPLE_ID \
   --directory /path/to/fastq_directory \
+  --outdir /path/to/output_directory \
   --subsample_reads NUM
 ```
 
