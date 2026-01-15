@@ -4,8 +4,7 @@
 
 # taxman
 
-**taxman** is a Nextflow workflow for assembling paired-end FASTQ reads and generating taxonomic summaries using DIAMOND alignments against the NCBI NR database.  
-An optional read downsampling step is included to enable fair cross-library comparisons.
+**taxman** is a Nextflow workflow for assembling paired-end FASTQ reads and generating taxonomic summaries using DIAMOND alignments against the NCBI NR database. An optional read downsampling step is included to enable fair cross-library comparisons.
 
 The final step of the pipeline outputs a summary. Only the first few lines are shown below to illustrate the format:
 ```
