@@ -2,7 +2,7 @@ process fastp_trim {
 
     tag "$sample"
 
-    publishDir "${params.outdir}/[trimmed|subsampled]", mode: 'copy'
+    publishDir "${params.outdir}/trimmed", mode: 'copy'
 
     input:
     tuple val(sample), path(fqs)
@@ -28,12 +28,12 @@ process fastp_trim {
     echo "Processing R1 files: \$R1_FILES"
     echo "Processing R2 files: \$R2_FILES"
 
-    # Run fastp with all files
-    fastp -i \$R1_FILES -I \$R2_FILES \
-          -o trimmed/${sample}_trimmed_R1.fq.gz \
-          -O trimmed/${sample}_trimmed_R2.fq.gz \
-          -y \
-          --detect_adapter_for_pe \
+    # Run fastp using the configured path
+    ${params.fastp_path} -i \$R1_FILES -I \$R2_FILES \\
+          -o trimmed/${sample}_trimmed_R1.fq.gz \\
+          -O trimmed/${sample}_trimmed_R2.fq.gz \\
+          -y \\
+          --detect_adapter_for_pe \\
           --thread 4
     """
 }

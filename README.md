@@ -25,13 +25,14 @@ The following tools must be installed and available on your system:
 
 ### 2. Configure executable paths
 
-Update the paths to the following executables in `nextflow.config`:
+Ensure the following tools are available in your `PATH`:
 
+- **fastp**
 - **seqtk**
 - **SPAdes**
 - **DIAMOND aligner**
 
-Ensure that **fastp** is available in your `PATH`.
+Alternatively, specify the full paths to these executables in nextflow.config.
 
 ---
 
