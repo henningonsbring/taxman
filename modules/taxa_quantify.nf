@@ -57,7 +57,7 @@ process taxa_quantify {
         printf "%-40s %10d %9.2f%%\\n", "TOTAL", total, 100.00;
     }' > ${sample}_taxa_summary.txt
 
-    # Create sorted top taxa list (clean version)
+    # Create sorted top taxa list with percentages
     awk -F'\\t' '{
         split(\$4, entries, ";");
         first_entry = entries[1];
@@ -69,7 +69,17 @@ process taxa_quantify {
     | sort \
     | uniq -c \
     | sort -k1,1nr \
-    | awk '{printf "%-40s %6d\\n", \$2 " " \$3, \$1}' > ${sample}_top_taxa.txt
+    | awk '{
+        total += \$1;
+        counts[NR] = \$1;
+        species[NR] = \$2 " " \$3;
+    }
+    END {
+        for (i = 1; i <= NR; i++) {
+            percent = (counts[i] / total) * 100;
+            printf "%-40s %6d %8.2f%%\\n", species[i], counts[i], percent;
+        }
+    }' > ${sample}_top_taxa.txt
 
     echo ""
     echo "Taxa quantification complete for sample: $sample"

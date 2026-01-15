@@ -7,6 +7,17 @@
 **taxman** is a Nextflow workflow for assembling paired-end FASTQ reads and generating taxonomic summaries using DIAMOND alignments against the NCBI NR database.  
 An optional read downsampling step is included to enable fair cross-library comparisons.
 
+The final step of the pipeline outputs a summary. For clarity, only the first lines are shown in the example below:
+```
+TAXA QUANTIFICATION SUMMARY
+ 
+Species                                       Count    Percent
+ 
+Haemophilus influenzae                          715     49.41%
+Cutibacterium acnes                              62      4.28%
+Pasteurella multocida                            57      3.94%
+```
+
 ---
 
 ## Getting started
@@ -71,13 +82,13 @@ diamond makedb \
 
 Add the path to the generated DIAMOND database in `nextflow.config`.
 
-#### Input requirements
+## Input requirements
 
 - Paired-end FASTQ files following this naming pattern: `*_R[12]_*.fastq.gz`
 
 - A DIAMOND NR database built with taxonomy support
 
-#### Typical usage
+## Typical usage
 
 ```bash
 nextflow run main.nf \
