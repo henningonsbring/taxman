@@ -94,8 +94,15 @@ workflow {
     println "STEP 5: Running diamond blastx"
     println "-" * 40
 
-    diamond_input = assembly_results.map { sample, assembly_dir, transcripts_file ->
-        tuple(sample, transcripts_file)
+    diamond_input = assembly_results.map { sample, assembly_dir ->
+        // Get the assembly file based on mode
+        def assembly_file
+        if (params.assembly_mode == "rna" || params.assembly_mode == "rnaviral") {
+            assembly_file = file("${assembly_dir}/transcripts.fasta")
+        } else {
+            assembly_file = file("${assembly_dir}/contigs.fasta")
+        }
+        tuple(sample, assembly_file)
     }
 
     diamond_results = diamond_blastx(diamond_input)

@@ -2,13 +2,13 @@ process spades_assemble {
 
     tag "$sample"
 
-    publishDir "${params.outdir ?: 'results'}/assemblies", mode: 'copy', pattern: "*.fasta"
+    publishDir "${params.outdir}/assemblies", mode: 'copy'
 
     input:
     tuple val(sample), path(r1_file), path(r2_file)
 
     output:
-    tuple val(sample), path("${sample}_assembly"), path("${sample}_assembly/transcripts.fasta")
+    tuple val(sample), path("${sample}_assembly")
 
     script:
     """
@@ -49,24 +49,7 @@ process spades_assemble {
     # Execute SPAdes
     eval \$CMD
 
-    echo ""
     echo "SPAdes assembly complete for sample: $sample"
-
-    # Check output file name based on mode
-    if [ "${params.assembly_mode}" = "rna" ] || [ "${params.assembly_mode}" = "rnaviral" ]; then
-        OUTPUT_FILE="transcripts.fasta"
-    else
-        OUTPUT_FILE="contigs.fasta"
-    fi
-
-    if [ ! -f "${sample}_assembly/\$OUTPUT_FILE" ]; then
-        echo "ERROR: \$OUTPUT_FILE not found!"
-        echo "Files in ${sample}_assembly/:"
-        ls -la "${sample}_assembly/"
-        exit 1
-    fi
-
-    transcript_count=\$(grep -c '^>' ${sample}_assembly/\$OUTPUT_FILE)
-    echo "Sequences created: \$transcript_count"
+    echo "Output directory: ${sample}_assembly"
     """
 }

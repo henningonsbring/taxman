@@ -5,7 +5,7 @@ process diamond_blastx {
     publishDir "${params.outdir}/diamond", mode: 'copy'
 
     input:
-    tuple val(sample), path(transcripts_file)
+    tuple val(sample), path(assembly_file)
 
     output:
     tuple val(sample), path("${sample}_vs_nr.tsv")
@@ -13,7 +13,7 @@ process diamond_blastx {
     script:
     """
     echo "Running diamond blastx for sample: $sample"
-    echo "Input transcripts: \$(basename ${transcripts_file})"
+    echo "Input assembly: \$(basename ${assembly_file})"
     echo "Database: ${params.diamond_db}"
     echo "Threads: ${params.diamond_threads}"
     echo ""
@@ -24,7 +24,7 @@ process diamond_blastx {
         --max-target-seqs ${params.diamond_max_target_seqs} \
         --outfmt 6 qseqid sseqid staxids sscinames sskingdoms skingdoms sphylums bitscore evalue \
         -d ${params.diamond_db} \
-        -q ${transcripts_file} \
+        -q ${assembly_file} \
         -o ${sample}_vs_nr.tsv
 
     echo "Diamond blastx complete for sample: $sample"
