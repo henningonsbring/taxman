@@ -7,6 +7,10 @@ include { diamond_blastx } from './modules/diamond.nf'
 include { taxa_quantify } from './modules/taxa_quantify.nf'
 
 workflow {
+    if (!params.directory) error "Please specify --directory"
+    if (!params.prefix) error "Please specify --prefix"
+    if (!params.outdir) error "Please specify --outdir"
+
     println "=" * 80
     println "WORKFLOW START"
     println "=" * 80
