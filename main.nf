@@ -15,6 +15,9 @@ workflow {
     if (params.subsample_reads) {
         println "Subsample reads: ${params.subsample_reads}"
     }
+    if (params.assembly_mode) {
+        println "Assembly mode: ${params.assembly_mode}"
+    }
     println ""
 
     // STEP 1: Find FASTQ files
