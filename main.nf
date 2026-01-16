@@ -105,6 +105,11 @@ workflow {
         } else {
             assembly_file = "${assembly_dir}/contigs.fasta"
         }
+
+        if (!file(assembly_file).exists()) {
+            error "Assembly file not found: ${assembly_file}"
+        }
+
         tuple(sample, file(assembly_file))
     }
 
