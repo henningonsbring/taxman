@@ -82,10 +82,9 @@ workflow {
 
     assembly_results = spades_assemble(final_fastqs)
 
-    assembly_results.subscribe { sample, assembly_dir, transcripts_file ->
+    assembly_results.subscribe { sample, assembly_dir ->
         println "Sample: $sample"
         println "  Assembly directory: $assembly_dir"
-        println "  Transcripts: ${transcripts_file.getFileName()}"
         println ""
     }
 
@@ -98,11 +97,11 @@ workflow {
         // Get the assembly file based on mode
         def assembly_file
         if (params.assembly_mode == "rna" || params.assembly_mode == "rnaviral") {
-            assembly_file = file("${assembly_dir}/transcripts.fasta")
+            assembly_file = "${assembly_dir}/transcripts.fasta"
         } else {
-            assembly_file = file("${assembly_dir}/contigs.fasta")
+            assembly_file = "${assembly_dir}/contigs.fasta"
         }
-        tuple(sample, assembly_file)
+        tuple(sample, file(assembly_file))
     }
 
     diamond_results = diamond_blastx(diamond_input)
