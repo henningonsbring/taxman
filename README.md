@@ -30,8 +30,12 @@ nextflow run main.nf \
   --prefix SAMPLE_ID \
   --directory /path/to/fastq_directory \
   --outdir /path/to/output_directory \
-  --subsample_reads NUM
+  --subsample_reads NUM \
+  --assembly_mode rna
 ```
+
+See the supported assembly mode options in the [SPAdes documentation](https://github.com/ablab/spades).  
+If the `--assembly_mode` flag is omitted, SPAdes will use its default assembly mode, which is genome assembly.
 
 ## Getting started
 
