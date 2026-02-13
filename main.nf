@@ -7,6 +7,10 @@ include { diamond_blastx } from './modules/diamond.nf'
 include { taxa_quantify } from './modules/taxa_quantify.nf'
 
 workflow {
+    if (!params.directory) error "Please specify --directory"
+    if (!params.prefix) error "Please specify --prefix"
+    if (!params.outdir) error "Please specify --outdir"
+
     println "=" * 80
     println "WORKFLOW START"
     println "=" * 80
@@ -101,6 +105,11 @@ workflow {
         } else {
             assembly_file = "${assembly_dir}/contigs.fasta"
         }
+
+        if (!file(assembly_file).exists()) {
+            error "Assembly file not found: ${assembly_file}"
+        }
+
         tuple(sample, file(assembly_file))
     }
 
